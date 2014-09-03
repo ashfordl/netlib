@@ -67,7 +67,11 @@ namespace NetLib.Server
             TcpClient client = (TcpClient)obj;
 
             Connection connect = new Connection(client);
-            this.connections.Add(connect);
+
+            lock (this.connections)
+            {
+                this.connections.Add(connect);
+            }
         }
     }
 }

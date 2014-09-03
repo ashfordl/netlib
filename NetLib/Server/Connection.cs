@@ -13,14 +13,22 @@ namespace NetLib.Server
         private TcpClient client;
         private NetworkStream stream;
 
+        private Thread readThread;
+
         public Connection(TcpClient client)
         {
             this.client = client;
             this.stream = client.GetStream();
 
-            Console.WriteLine("Server: Client loaded");
+            this.InitReadThread();
 
-            this.Read();
+            Console.WriteLine("Server: Client loaded");
+        }
+
+        protected void InitReadThread()
+        {
+            this.readThread = new Thread(this.Read);
+            readThread.Start();
         }
 
         protected int ReadPayloadSize()
