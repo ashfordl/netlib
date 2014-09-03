@@ -107,11 +107,16 @@ namespace NetLib.Server
         public void Send(string message)
         {
             // Encode message in bytes
-            ASCIIEncoding encoder = new ASCIIEncoding();
-            byte[] buffer = encoder.GetBytes(message);
+            byte[] msgBuffer = Encoding.ASCII.GetBytes(message);
+            byte[] lenBuffer = BitConverter.GetBytes(msgBuffer.Length); // 4 bytes
 
+            // Concat two byte arrays
+            byte[] buffer = new byte[4 + msgBuffer.Length];
+            lenBuffer.CopyTo(buffer, 0);
+            msgBuffer.CopyTo(buffer, 4);
+
+            // Send the data
             this.stream.Write(buffer, 0, buffer.Length);
-            this.stream.Flush();
         }
     }
 }

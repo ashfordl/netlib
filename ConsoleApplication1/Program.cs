@@ -33,16 +33,19 @@ namespace ConsoleApplication1
 
             NetworkStream clientStream = client.GetStream();
 
+            string message = "yo hello team";
 
+            // Encode message in bytes
+            byte[] msgBuffer = Encoding.ASCII.GetBytes(message);
+            byte[] lenBuffer = BitConverter.GetBytes(msgBuffer.Length); // 4 bytes
 
-            byte[] buffer = Encoding.ASCII.GetBytes("yo yo wassup");
+            // Concat two byte arrays
+            byte[] buffer = new byte[4 + msgBuffer.Length];
+            lenBuffer.CopyTo(buffer, 0);
+            msgBuffer.CopyTo(buffer, 4);
 
-            byte[] lenBuffer = BitConverter.GetBytes(buffer.Length);
-
-            clientStream.Write(lenBuffer, 0, 4);
+            // Send the data
             clientStream.Write(buffer, 0, buffer.Length);
-
-            clientStream.Flush();
         }
     }
 }
