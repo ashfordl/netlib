@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NetLib.Client;
+﻿using NetLib.Client;
 using NetLib.Server;
-using System.Net.Sockets;
+using System;
 using System.Net;
+using System.Net.Sockets;
+using System.Text;
 
 namespace ConsoleApplication1
 {
@@ -19,33 +16,13 @@ namespace ConsoleApplication1
             Server server = new Server(port);
             server.Serve();
 
-            Client(port);
-            Console.WriteLine("Client: Message sent");
-        }
+            IPEndPoint ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
 
-        static void Client(int port)
-        {
-            TcpClient client = new TcpClient();
+            //Client client = new Client(ip);
+            Client client = new Client(IPAddress.Parse("127.0.0.1"), port);
+            //Client client = new Client("127.0.0.1", port);
 
-            IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
-
-            client.Connect(serverEndPoint);
-
-            NetworkStream clientStream = client.GetStream();
-
-            string message = "yo hello team";
-
-            // Encode message in bytes
-            byte[] msgBuffer = Encoding.ASCII.GetBytes(message);
-            byte[] lenBuffer = BitConverter.GetBytes(msgBuffer.Length); // 4 bytes
-
-            // Concat two byte arrays
-            byte[] buffer = new byte[4 + msgBuffer.Length];
-            lenBuffer.CopyTo(buffer, 0);
-            msgBuffer.CopyTo(buffer, 4);
-
-            // Send the data
-            clientStream.Write(buffer, 0, buffer.Length);
+            client.Send("Bonjour, wie gehts dir?");
         }
     }
 }
