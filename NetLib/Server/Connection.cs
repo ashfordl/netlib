@@ -25,13 +25,13 @@ namespace NetLib.Server
             Console.WriteLine("Server: Client loaded");
         }
 
-        protected void InitReadThread()
+        private void InitReadThread()
         {
             this.readThread = new Thread(this.Read);
             readThread.Start();
         }
 
-        protected int ReadPayloadSize()
+        private int ReadPayloadSize()
         {
             // Read the size of the message
             byte[] sizeBuffer = new byte[4];
@@ -52,7 +52,7 @@ namespace NetLib.Server
             return BitConverter.ToInt32(sizeBuffer, 0);
         }
 
-        protected byte[] ReadPayload(int size)
+        private byte[] ReadPayload(int size)
         {
             // Assign the payload buffer array
             byte[] message = new byte[size];
@@ -72,7 +72,7 @@ namespace NetLib.Server
             return message;
         }
 
-        protected void Read()
+        private void Read()
         {
             while (true)
             {

@@ -47,7 +47,7 @@ namespace NetLib.Server
             this.listenThread.Start();
         }
 
-        protected void Listen()
+        private void Listen()
         {
             this.listener.Start();
 
@@ -62,7 +62,7 @@ namespace NetLib.Server
             }
         }
 
-        protected void HandleClientConnected(object obj)
+        private void HandleClientConnected(object obj)
         {
             TcpClient client = (TcpClient)obj;
 
