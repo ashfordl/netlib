@@ -48,7 +48,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LibNET\NetLib.csproj">
+    <ProjectReference Include="..\NetLib\NetLib.csproj">
       <Project>{cabe5d25-e4f2-4af5-be9c-99e672ccd54b}</Project>
       <Name>NetLib</Name>
     </ProjectReference>
