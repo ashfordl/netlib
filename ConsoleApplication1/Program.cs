@@ -17,7 +17,6 @@ namespace ConsoleApplication1
             int port = 6565;
 
             Server server = new Server(port);
-
             server.Serve();
 
             Client(port);
@@ -39,8 +38,6 @@ namespace ConsoleApplication1
             byte[] buffer = Encoding.ASCII.GetBytes("yo yo wassup");
 
             byte[] lenBuffer = BitConverter.GetBytes(buffer.Length);
-
-            Console.WriteLine("Client: Size (bytes): " + buffer.Length);
 
             clientStream.Write(lenBuffer, 0, 4);
             clientStream.Write(buffer, 0, buffer.Length);

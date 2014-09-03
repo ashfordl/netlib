@@ -31,16 +31,14 @@ namespace NetLib.Server
             // Init message framing variables
             int totalRead = 0, currentRead = 0;
 
-            // Initial read
-            currentRead = totalRead = this.stream.Read(sizeBuffer, 0, 4);
-
-            // Ensure that all 4 bytes have been read
-            while (totalRead < sizeBuffer.Length && currentRead > 0)
+            // Read the size
+            do
             {
                 currentRead = this.stream.Read(sizeBuffer, totalRead, sizeBuffer.Length - totalRead);
 
                 totalRead += currentRead;
             }
+            while (totalRead < sizeBuffer.Length && currentRead > 0);
 
             // Convert the size to an integer
             return BitConverter.ToInt32(sizeBuffer, 0);
@@ -55,15 +53,13 @@ namespace NetLib.Server
             int totalRead = 0, currentRead = 0;
 
             // Read the payload
-            currentRead = totalRead = this.stream.Read(message, 0, size);
-
-            // Ensure that the entire payload is read
-            while (totalRead < message.Length && currentRead > 0)
+            do
             {
                 currentRead = this.stream.Read(message, totalRead, message.Length - totalRead);
 
                 totalRead += currentRead;
             }
+            while (totalRead < message.Length && currentRead > 0);
 
             return message;
         }
@@ -79,9 +75,7 @@ namespace NetLib.Server
                     // Convert the size to an integer
                     int size = this.ReadPayloadSize();
 
-                    Console.WriteLine("Server: Size (bytes): " + size);
-
-                   
+                    message = ReadPayload(size);
                 }
                 catch
                 {
@@ -96,7 +90,7 @@ namespace NetLib.Server
 
                 // Message received
                 string msg = Encoding.ASCII.GetString(message, 0, message.Length);
-                System.Diagnostics.Debug.WriteLine("Server: "+msg);
+                Console.WriteLine("Server: "+msg);
             }
 
             this.client.Close();
