@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using NetLib.Events;
 
-namespace NetLib.Server
+namespace NetLib.Tcp.Server
 {
     /// <summary>
     /// Represents a client connection to the server.

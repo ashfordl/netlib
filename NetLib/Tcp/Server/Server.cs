@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using NetLib.Events;
 
-namespace NetLib.Server
+namespace NetLib.Tcp.Server
 {
     /// <summary>
     /// Represents a TCP server.

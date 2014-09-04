@@ -6,10 +6,10 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace NetLib.Client
+namespace NetLib.Tcp.Client
 {
     /// <summary>
-    /// Represents a connection to a <see cref="NetLib.Server.Server" />.
+    /// Represents a connection to a <see cref="NetLib.Tcp.Server.Server" />.
     /// </summary>
     public class Client
     {

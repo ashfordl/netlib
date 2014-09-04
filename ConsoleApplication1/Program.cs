@@ -1,5 +1,5 @@
-﻿using NetLib.Client;
-using NetLib.Server;
+﻿using NetLib.Tcp.Client;
+using NetLib.Tcp.Server;
 using System;
 using System.Net;
 using System.Net.Sockets;
