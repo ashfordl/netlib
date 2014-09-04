@@ -1,10 +1,12 @@
 ﻿// Connection.cs
+// <copyright file="Connection.cs"> This code is protected under the MIT License. </copyright>
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using NetLib.Events;
 
 namespace NetLib.Server
 {
@@ -15,20 +17,27 @@ namespace NetLib.Server
 
         private Thread readThread;
 
+        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+
         public Connection(TcpClient client)
         {
             this.client = client;
             this.stream = client.GetStream();
 
-            this.InitReadThread();
+            this.readThread = new Thread(this.Read);
+            this.readThread.Start();
 
             Console.WriteLine("Server: Client loaded");
         }
 
-        private void InitReadThread()
+        protected virtual void OnMessageReceived(MessageReceivedEventArgs e)
         {
-            this.readThread = new Thread(this.Read);
-            readThread.Start();
+            EventHandler<MessageReceivedEventArgs> handler = this.MessageReceived;
+
+            if (handler != null)
+            {
+                handler(this, e);
+            }
         }
 
         private int ReadPayloadSize()
@@ -98,7 +107,8 @@ namespace NetLib.Server
 
                 // Message received
                 string msg = Encoding.ASCII.GetString(message, 0, message.Length);
-                Console.WriteLine("Server: "+msg);
+
+                this.OnMessageReceived(new MessageReceivedEventArgs(msg, (this.client.Client.RemoteEndPoint as IPEndPoint).Address));
             }
 
             this.client.Close();

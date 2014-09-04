@@ -1,4 +1,5 @@
 ﻿// Server.cs
+using NetLib.Events;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -66,12 +67,22 @@ namespace NetLib.Server
         {
             TcpClient client = (TcpClient)obj;
 
+            // Create new connection
             Connection connect = new Connection(client);
 
+            // Subscribe to events
+            connect.MessageReceived += this.MessageReceived;
+            
+            // Add the connection to the master list
             lock (this.connections)
             {
                 this.connections.Add(connect);
             }
+        }
+
+        private void MessageReceived(object sender, MessageReceivedEventArgs e)
+        {
+            Console.WriteLine("Server: Message received \""+e.Message+"\"");
         }
     }
 }
