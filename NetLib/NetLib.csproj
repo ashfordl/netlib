@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\Client.cs" />
+    <Compile Include="MessageReceivedEventArgs.cs" />
     <Compile Include="Server\Connection.cs" />
     <Compile Include="Server\Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
