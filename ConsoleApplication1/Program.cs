@@ -18,9 +18,9 @@ namespace ConsoleApplication1
 
             IPEndPoint ip = new IPEndPoint(IPAddress.Parse("127.0.0.1"), port);
 
-            //Client client = new Client(ip);
+            // Client client = new Client(ip);
             Client client = new Client(IPAddress.Parse("127.0.0.1"), port);
-            //Client client = new Client("127.0.0.1", port);
+            // Client client = new Client("127.0.0.1", port);
 
             client.Send("Bonjour, wie gehts dir?");
         }
