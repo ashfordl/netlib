@@ -15,7 +15,7 @@ namespace NetLib.Events
         /// </summary>
         /// <param name="message"> The message received. </param>
         /// <param name="origin"> The IP Address from which the message was received. </param>
-        public MessageReceivedEventArgs(string message = "", IPAddress origin = null)
+        public MessageReceivedEventArgs(string message, IPAddress origin)
         {
             this.Message = message;
             this.Origin = origin;
