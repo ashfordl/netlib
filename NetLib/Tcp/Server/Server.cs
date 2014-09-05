@@ -14,13 +14,13 @@ namespace NetLib.Tcp.Server
     /// </summary>
     public class Server
     {
+        private readonly int port;
+
         private TcpListener listener;
 
         private Thread listenThread;
 
         private List<Connection> connections;
-
-        private int port;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Server" /> class.
@@ -28,29 +28,26 @@ namespace NetLib.Tcp.Server
         /// <param name="port"> The port number of the server. </param>
         public Server(int port)
         {
-            this.Port = port;
+            if (port < 1024 || port > 65535)
+            {
+                throw new ArgumentOutOfRangeException("value", "Port must be between 1 and 65536");
+            }
+            else
+            {
+                this.port = port;
+            }
 
             this.connections = new List<Connection>();
         }
 
         /// <summary>
-        /// Gets or sets the port number of the server.
+        /// Gets the port number of the server.
         /// </summary>
         public int Port
         {
             get
             {
                 return this.port;
-            }
-
-            protected set
-            {
-                if (value < 1024 || value > 65535)
-                {
-                    throw new ArgumentOutOfRangeException("value", "Port must be between 1 and 65536");
-                }
-
-                this.port = value;
             }
         }
 
