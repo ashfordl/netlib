@@ -55,17 +55,7 @@ namespace NetLib.Tcp.Server
         /// <param name="message"> The message to be sent. </param>
         public void Send(string message)
         {
-            // Encode message in bytes
-            byte[] msgBuffer = Encoding.ASCII.GetBytes(message);
-            byte[] lenBuffer = BitConverter.GetBytes(msgBuffer.Length); // 4 bytes
-
-            // Concat two byte arrays
-            byte[] buffer = new byte[4 + msgBuffer.Length];
-            lenBuffer.CopyTo(buffer, 0);
-            msgBuffer.CopyTo(buffer, 4);
-
-            // Send the data
-            this.stream.Write(buffer, 0, buffer.Length);
+            StreamUtil.Send(this.stream, message);
         }
 
         /// <summary>
@@ -83,56 +73,6 @@ namespace NetLib.Tcp.Server
         }
 
         /// <summary>
-        /// Reads the size, in bytes, of the message payload.
-        /// </summary>
-        /// <returns> The number of bytes of the payload. </returns>
-        private int ReadPayloadSize()
-        {
-            // Read the size of the message
-            byte[] sizeBuffer = new byte[4];
-
-            // Init message framing variables
-            int totalRead = 0, currentRead = 0;
-
-            // Read the size
-            do
-            {
-                currentRead = this.stream.Read(sizeBuffer, totalRead, sizeBuffer.Length - totalRead);
-
-                totalRead += currentRead;
-            }
-            while (totalRead < sizeBuffer.Length && currentRead > 0);
-
-            // Convert the size to an integer
-            return BitConverter.ToInt32(sizeBuffer, 0);
-        }
-
-        /// <summary>
-        /// Reads the message payload.
-        /// </summary>
-        /// <param name="size"> The size, in bytes, of the payload. </param>
-        /// <returns> The payload. </returns>
-        private byte[] ReadPayload(int size)
-        {
-            // Assign the payload buffer array
-            byte[] message = new byte[size];
-
-            // Asign message framing variables
-            int totalRead = 0, currentRead = 0;
-
-            // Read the payload
-            do
-            {
-                currentRead = this.stream.Read(message, totalRead, message.Length - totalRead);
-
-                totalRead += currentRead;
-            }
-            while (totalRead < message.Length && currentRead > 0);
-
-            return message;
-        }
-
-        /// <summary>
         /// Reads data from the connection.
         /// </summary>
         /// <remarks>
@@ -140,35 +80,22 @@ namespace NetLib.Tcp.Server
         /// </remarks>
         private void Read()
         {
-            while (true)
-            {
-                byte[] message;
+            StreamUtil.Read(this.stream, this.Message);
 
-                try
-                {
-                    // Convert the size to an integer
-                    int size = this.ReadPayloadSize();
-
-                    message = this.ReadPayload(size);
-                }
-                catch
-                {
-                    break;
-                }
-
-                if (message.Length == 0)
-                {
-                    // Client disconnected
-                    break;
-                }
-
-                // Message received
-                string msg = Encoding.ASCII.GetString(message, 0, message.Length);
-
-                this.OnMessageReceived(new MessageReceivedEventArgs(msg, (this.client.Client.RemoteEndPoint as IPEndPoint).Address));
-            }
-
+            // If the read function fails, close the connection
             this.client.Close();
+        }
+
+        /// <summary>
+        /// A delegate function called when a message is received.
+        /// </summary>
+        /// <remarks>
+        /// This is the delegate callback called by StreamUtils.Read on this object's read thread.
+        /// </remarks>
+        /// <param name="msg"> The message received. </param>
+        private void Message(string msg)
+        {
+            this.OnMessageReceived(new MessageReceivedEventArgs(msg, (this.client.Client.RemoteEndPoint as IPEndPoint).Address));
         }
     }
 }
