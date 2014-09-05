@@ -61,6 +61,12 @@ namespace NetLib.Tcp.Client
             this.InitReadThread();
         }
 
+        public void Disconnect()
+        {
+            this.readThread.Abort();
+            this.tcp.Close();
+        }
+
         /// <summary>
         /// Sends the message to the server.
         /// </summary>
