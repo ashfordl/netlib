@@ -41,6 +41,11 @@ namespace NetLib.Tcp.Server
         public event EventHandler<MessageReceivedEventArgs> MessageReceived;
 
         /// <summary>
+        /// Fires when the remote becomes disconnected.
+        /// </summary>
+        public event EventHandler<RemoteDisconnectedEventArgs> RemoteDisconnected;
+
+        /// <summary>
         /// Sends the message to the server.
         /// </summary>
         /// <param name="message"> The message to be sent. </param>
@@ -63,11 +68,26 @@ namespace NetLib.Tcp.Server
             }
         }
 
+        /// <summary>
+        /// Manages and fires the <see cref="RemoteDisconnected" /> event.
+        /// </summary>
+        /// <param name="e"> The event arguments to fire with. </param>
+        protected virtual void OnRemoteDisconnected(RemoteDisconnectedEventArgs e)
+        {
+            EventHandler<RemoteDisconnectedEventArgs> handler = this.RemoteDisconnected;
+
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
         private void Read()
         {
             StreamUtil.Read(this.stream, this.Message);
 
             // If the read function fails, close the connection
+            this.OnRemoteDisconnected(new RemoteDisconnectedEventArgs((this.client.Client.RemoteEndPoint as IPEndPoint).Address));
             this.client.Close();
         }
 
