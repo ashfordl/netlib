@@ -14,24 +14,12 @@ namespace NetLib.Tcp.Server
     /// </summary>
     public class Server
     {
-        /// <summary>
-        /// The TCP listener to watch for incoming connections.
-        /// </summary>
         private TcpListener listener;
 
-        /// <summary>
-        /// The thread to listen for incoming connections.
-        /// </summary>
         private Thread listenThread;
 
-        /// <summary>
-        /// A list of all current connections.
-        /// </summary>
         private List<Connection> connections;
 
-        /// <summary>
-        /// The internal storage of the port number.
-        /// </summary>
         private int port;
 
         /// <summary>
@@ -77,12 +65,6 @@ namespace NetLib.Tcp.Server
             this.listenThread.Start();
         }
 
-        /// <summary>
-        /// Listens for any incoming connections.
-        /// </summary>
-        /// <remarks>
-        /// This is a blocking method.
-        /// </remarks>
         private void Listen()
         {
             this.listener.Start();
@@ -98,10 +80,6 @@ namespace NetLib.Tcp.Server
             }
         }
 
-        /// <summary>
-        /// Handles a new client connection.
-        /// </summary>
-        /// <param name="obj"> The client connection object. </param>
         private void HandleClientConnected(object obj)
         {
             TcpClient client = (TcpClient)obj;
@@ -119,11 +97,6 @@ namespace NetLib.Tcp.Server
             }
         }
 
-        /// <summary>
-        /// Handles the message received event.
-        /// </summary>
-        /// <param name="sender"> The event sender. </param>
-        /// <param name="e"> The event arguments. </param>
         private void MessageReceived(object sender, MessageReceivedEventArgs e)
         {
             Console.WriteLine("Server: Message received \"" + e.Message + "\"");

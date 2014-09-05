@@ -14,19 +14,10 @@ namespace NetLib.Tcp.Server
     /// </summary>
     internal class Connection
     {
-        /// <summary>
-        /// The TCP connection object.
-        /// </summary>
         private TcpClient client;
 
-        /// <summary>
-        /// The underlying stream of data.
-        /// </summary>
         private NetworkStream stream;
 
-        /// <summary>
-        /// The thread used to read incoming data.
-        /// </summary>
         private Thread readThread;
 
         /// <summary>
@@ -72,12 +63,6 @@ namespace NetLib.Tcp.Server
             }
         }
 
-        /// <summary>
-        /// Reads data from the connection.
-        /// </summary>
-        /// <remarks>
-        /// This is a blocking method.
-        /// </remarks>
         private void Read()
         {
             StreamUtil.Read(this.stream, this.Message);
@@ -86,15 +71,9 @@ namespace NetLib.Tcp.Server
             this.client.Close();
         }
 
-        /// <summary>
-        /// A delegate function called when a message is received.
-        /// </summary>
-        /// <remarks>
-        /// This is the delegate callback called by StreamUtils.Read on this object's read thread.
-        /// </remarks>
-        /// <param name="msg"> The message received. </param>
         private void Message(string msg)
         {
+            // Raise the MessageReceived event
             this.OnMessageReceived(new MessageReceivedEventArgs(msg, (this.client.Client.RemoteEndPoint as IPEndPoint).Address));
         }
     }

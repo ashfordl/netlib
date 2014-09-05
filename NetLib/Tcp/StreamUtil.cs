@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// StreamUtil.cs
+// <copyright file="StreamUtil.cs"> This code is protected under the MIT License. </copyright>
+using System;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace NetLib.Tcp
 {
+    /// <summary>
+    /// Provides various methods for sending and receiving data over a NetworkStream.
+    /// </summary>
     internal static class StreamUtil
     {
         /// <summary>
@@ -39,61 +41,13 @@ namespace NetLib.Tcp
         }
 
         /// <summary>
-        /// Reads the size, in bytes, of the message payload.
-        /// </summary>
-        /// <returns> The number of bytes of the payload. </returns>
-        private static int ReadPayloadSize(NetworkStream stream)
-        {
-            // Read the size of the message
-            byte[] sizeBuffer = new byte[4];
-
-            // Init message framing variables
-            int totalRead = 0, currentRead = 0;
-
-            // Read the size
-            do
-            {
-                currentRead = stream.Read(sizeBuffer, totalRead, sizeBuffer.Length - totalRead);
-
-                totalRead += currentRead;
-            }
-            while (totalRead < sizeBuffer.Length && currentRead > 0);
-
-            // Convert the size to an integer
-            return BitConverter.ToInt32(sizeBuffer, 0);
-        }
-
-        /// <summary>
-        /// Reads the message payload.
-        /// </summary>
-        /// <param name="size"> The size, in bytes, of the payload. </param>
-        /// <returns> The payload. </returns>
-        private static byte[] ReadPayload(NetworkStream stream, int size)
-        {
-            // Assign the payload buffer array
-            byte[] message = new byte[size];
-
-            // Asign message framing variables
-            int totalRead = 0, currentRead = 0;
-
-            // Read the payload
-            do
-            {
-                currentRead = stream.Read(message, totalRead, message.Length - totalRead);
-
-                totalRead += currentRead;
-            }
-            while (totalRead < message.Length && currentRead > 0);
-
-            return message;
-        }
-
-        /// <summary>
         /// Reads data from the connection.
         /// </summary>
         /// <remarks>
-        /// This is a blocking method. IT will finish on client disconnect.
+        /// This is a blocking method. It will return on client disconnect.
         /// </remarks>
+        /// <param name="stream"> The network stream to read from. </param>
+        /// <param name="messageCallback"> The function to call when a message is received. </param>
         public static void Read(NetworkStream stream, Action<string> messageCallback)
         {
             while (true)
@@ -123,6 +77,47 @@ namespace NetLib.Tcp
 
                 messageCallback(msg);
             }
+        }
+
+        private static int ReadPayloadSize(NetworkStream stream)
+        {
+            // Read the size of the message
+            byte[] sizeBuffer = new byte[4];
+
+            // Init message framing variables
+            int totalRead = 0, currentRead = 0;
+
+            // Read the size
+            do
+            {
+                currentRead = stream.Read(sizeBuffer, totalRead, sizeBuffer.Length - totalRead);
+
+                totalRead += currentRead;
+            }
+            while (totalRead < sizeBuffer.Length && currentRead > 0);
+
+            // Convert the size to an integer
+            return BitConverter.ToInt32(sizeBuffer, 0);
+        }
+
+        private static byte[] ReadPayload(NetworkStream stream, int size)
+        {
+            // Assign the payload buffer array
+            byte[] message = new byte[size];
+
+            // Asign message framing variables
+            int totalRead = 0, currentRead = 0;
+
+            // Read the payload
+            do
+            {
+                currentRead = stream.Read(message, totalRead, message.Length - totalRead);
+
+                totalRead += currentRead;
+            }
+            while (totalRead < message.Length && currentRead > 0);
+
+            return message;
         }
     }
 }
