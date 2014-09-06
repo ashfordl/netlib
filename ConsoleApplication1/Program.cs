@@ -20,10 +20,15 @@ namespace ConsoleApplication1
             server.Serve();
 
             Client client = new Client(IPAddress.Parse("127.0.0.1"), port);
+            client.MessageReceived += Program.Client_MessageReceived;
 
             client.Send("Bonjour, wie gehts dir?");
 
-            Thread.Sleep(2000);
+            Thread.Sleep(250);
+
+            server.MessageAllClients("Broadcast");
+
+            Thread.Sleep(250);
 
             client.Disconnect();
         }
@@ -36,6 +41,11 @@ namespace ConsoleApplication1
         static void Server_ClientDisconnected(object sender, DisconnectedEventArgs e)
         {
             Console.WriteLine("Client " + e.RemoteIP + " disconnected");
+        }
+
+        static void Client_MessageReceived(object sender, MessageReceivedEventArgs e)
+        {
+            Console.WriteLine("Client received message: " + e.Message);
         }
     }
 }

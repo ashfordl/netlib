@@ -107,15 +107,8 @@ namespace NetLib.Tcp
         /// <param name="message"> The message to be sent. </param>
         public void Send(string message)
         {
-            this.Send(Encoding.ASCII.GetBytes(message));
-        }
+            byte[] payload = Encoding.ASCII.GetBytes(message);
 
-        /// <summary>
-        /// Writes the payload to the specified network stream.
-        /// </summary>
-        /// <param name="payload"> The payload to be sent. </param>
-        public void Send(byte[] payload)
-        {
             // Encode message in bytes
             byte[] lenBuffer = BitConverter.GetBytes(payload.Length); // 4 bytes
 

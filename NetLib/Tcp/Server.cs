@@ -72,10 +72,25 @@ namespace NetLib.Tcp
             this.listenThread.Start();
         }
 
+        /// <summary>
+        /// Sends the passed message to every connected client.
+        /// </summary>
+        /// <param name="message"> The message to send. </param>
+        public void MessageAllClients(string message)
+        {
+            lock (this.connections)
+            {
+                foreach (Client client in this.connections)
+                {
+                    client.Send(message);
+                }
+            }
+        }
 
         /// <summary>
         /// Manages and fires the <see cref="MessageReceived" /> event.
         /// </summary>
+        /// <param name="origin"> The Client object that first fired the event. </param>
         /// <param name="e"> The event arguments to fire with. </param>
         protected virtual void OnMessageReceived(object origin, MessageReceivedEventArgs e)
         {
@@ -90,6 +105,7 @@ namespace NetLib.Tcp
         /// <summary>
         /// Manages and fires the <see cref="ClientDisconnected" /> event.
         /// </summary>
+        /// <param name="origin"> The Client object that first fired the event. </param>
         /// <param name="e"> The event arguments to fire with. </param>
         protected virtual void OnClientDisconnected(object origin, DisconnectedEventArgs e)
         {
@@ -101,11 +117,10 @@ namespace NetLib.Tcp
             }
         }
 
-
         /// <summary>
         /// Handles the connection of a new client.
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj"> The client connection object. </param>
         protected virtual void HandleClientConnected(object obj)
         {
             TcpClient client = (TcpClient)obj;
