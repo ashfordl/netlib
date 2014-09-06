@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// Client.cs
+// <copyright file="Client.cs"> This code is protected under the MIT License. </copyright>
+using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
-using NetLib.Events;
-using System.Net;
 using System.Threading;
+using NetLib.Events;
 
 namespace NetLib.Tcp
 {
+    /// <summary>
+    /// Represents a network connection.
+    /// </summary>
     public class Client
     {
         private TcpClient client;
@@ -18,6 +20,10 @@ namespace NetLib.Tcp
 
         private Thread readThread;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Client" /> class.
+        /// </summary>
+        /// <param name="client"> The client to use as a connection. </param>
         public Client(TcpClient client)
         {
             this.client = client;
@@ -27,34 +33,48 @@ namespace NetLib.Tcp
             this.readThread.Start();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Client" /> class.
+        /// </summary>
+        /// <param name="ipep"> The remote IPEndPoint to connect to. </param>
         public Client(IPEndPoint ipep)
         {
             this.client = new TcpClient();
             this.client.Connect(ipep);
 
-            this.stream = client.GetStream();
+            this.stream = this.client.GetStream();
 
             this.readThread = new Thread(this.Read);
             this.readThread.Start();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Client" /> class.
+        /// </summary>
+        /// <param name="ip"> The remote IP to connect to. </param>
+        /// <param name="port"> The remote port to connect to. </param>
         public Client(IPAddress ip, int port)
         {
             this.client = new TcpClient();
             this.client.Connect(ip, port);
 
-            this.stream = client.GetStream();
+            this.stream = this.client.GetStream();
 
             this.readThread = new Thread(this.Read);
             this.readThread.Start();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Client" /> class.
+        /// </summary>
+        /// <param name="hostname"> The remote hostname to connect to. </param>
+        /// <param name="port"> The remote port to connect to. </param>
         public Client(string hostname, int port)
         {
             this.client = new TcpClient();
             this.client.Connect(hostname, port);
 
-            this.stream = client.GetStream();
+            this.stream = this.client.GetStream();
 
             this.readThread = new Thread(this.Read);
             this.readThread.Start();
