@@ -86,7 +86,7 @@ namespace NetLib.Tcp
 
             // Subscribe to events
             connect.MessageReceived += this.MessageReceived;
-            connect.RemoteDisconnected += this.RemoteDisconnected;
+            connect.Disconnected += this.RemoteDisconnected;
             
             // Add the connection to the master list
             lock (this.connections)
@@ -100,7 +100,7 @@ namespace NetLib.Tcp
             Console.WriteLine("Server: Message received \"" + e.Message + "\"");
         }
 
-        private void RemoteDisconnected(object sender, RemoteDisconnectedEventArgs e)
+        private void RemoteDisconnected(object sender, DisconnectedEventArgs e)
         {
             Console.WriteLine("Server: Client disconnected. IP = " + e.RemoteIP);
         }
