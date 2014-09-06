@@ -30,7 +30,7 @@ namespace NetLib.Tcp
         {
             if (port < 1024 || port > 65535)
             {
-                throw new ArgumentOutOfRangeException("value", "Port must be between 1 and 65536");
+                throw new ArgumentOutOfRangeException("port", "Port must be between 1 and 65536");
             }
             else
             {
@@ -62,22 +62,11 @@ namespace NetLib.Tcp
             this.listenThread.Start();
         }
 
-        private void Listen()
-        {
-            this.listener.Start();
-
-            while (true)
-            {
-                // Block until a client connects
-                TcpClient client = this.listener.AcceptTcpClient();
-
-                // Create a new client thread
-                Thread clientThread = new Thread(new ParameterizedThreadStart(this.HandleClientConnected));
-                clientThread.Start(client);
-            }
-        }
-
-        private void HandleClientConnected(object obj)
+        /// <summary>
+        /// Handles the connection of a new client.
+        /// </summary>
+        /// <param name="obj"></param>
+        protected virtual void HandleClientConnected(object obj)
         {
             TcpClient client = (TcpClient)obj;
 
@@ -95,14 +84,39 @@ namespace NetLib.Tcp
             }
         }
 
-        private void MessageReceived(object sender, MessageReceivedEventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected virtual void MessageReceived(object sender, MessageReceivedEventArgs e)
         {
             Console.WriteLine("Server: Message received \"" + e.Message + "\"");
         }
 
-        private void RemoteDisconnected(object sender, DisconnectedEventArgs e)
+        protected virtual void RemoteDisconnected(object sender, DisconnectedEventArgs e)
         {
             Console.WriteLine("Server: Client disconnected. IP = " + e.RemoteIP);
+
+            lock (this.connections)
+            {
+                this.connections.Remove((Client)sender);
+            }
+        }
+
+        private void Listen()
+        {
+            this.listener.Start();
+
+            while (true)
+            {
+                // Block until a client connects
+                TcpClient client = this.listener.AcceptTcpClient();
+
+                // Create a new client thread
+                Thread clientThread = new Thread(new ParameterizedThreadStart(this.HandleClientConnected));
+                clientThread.Start(client);
+            }
         }
     }
 }
