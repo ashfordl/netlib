@@ -1,5 +1,5 @@
-﻿// RemoteDisconnectedEventArgs.cs
-// <copyright file="RemoteDisconnectedEventArgs.cs"> This code is protected under the MIT License. </copyright>
+﻿// DisconnectedEventArgs.cs
+// <copyright file="DisconnectedEventArgs.cs"> This code is protected under the MIT License. </copyright>
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +12,13 @@ namespace NetLib.Events
     /// <summary>
     /// Contains event arguments for when the remote becomes disconnected.
     /// </summary>
-    public class RemoteDisconnectedEventArgs : EventArgs
+    public class DisconnectedEventArgs : EventArgs
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RemoteDisconnectedEventArgs" /> class.
+        /// Initializes a new instance of the <see cref="DisconnectedEventArgs" /> class.
         /// </summary>
         /// <param name="remote"> The remote IP address which became disconnected. </param>
-        public RemoteDisconnectedEventArgs(IPAddress remote)
+        public DisconnectedEventArgs(IPAddress remote)
         {
             this.RemoteIP = remote;
         }

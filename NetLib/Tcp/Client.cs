@@ -88,7 +88,7 @@ namespace NetLib.Tcp
         /// <summary>
         /// Fires when the remote becomes disconnected.
         /// </summary>
-        public event EventHandler<RemoteDisconnectedEventArgs> RemoteDisconnected;
+        public event EventHandler<DisconnectedEventArgs> Disconnected;
 
         /// <summary>
         /// Writes a message to the specified network stream.
@@ -122,7 +122,7 @@ namespace NetLib.Tcp
         /// </summary>
         public void Disconnect()
         {
-            this.OnRemoteDisconnected(new RemoteDisconnectedEventArgs((this.client.Client.RemoteEndPoint as IPEndPoint).Address));
+            this.OnDisconnected(new DisconnectedEventArgs((this.client.Client.RemoteEndPoint as IPEndPoint).Address));
 
             this.readThread.Abort();
             this.client.Close();
@@ -143,12 +143,12 @@ namespace NetLib.Tcp
         }
 
         /// <summary>
-        /// Manages and fires the <see cref="RemoteDisconnected" /> event.
+        /// Manages and fires the <see cref="Disconnected" /> event.
         /// </summary>
         /// <param name="e"> The event arguments to fire with. </param>
-        protected virtual void OnRemoteDisconnected(RemoteDisconnectedEventArgs e)
+        protected virtual void OnDisconnected(DisconnectedEventArgs e)
         {
-            EventHandler<RemoteDisconnectedEventArgs> handler = this.RemoteDisconnected;
+            EventHandler<DisconnectedEventArgs> handler = this.Disconnected;
 
             if (handler != null)
             {
@@ -192,7 +192,7 @@ namespace NetLib.Tcp
                 this.OnMessageReceived(new MessageReceivedEventArgs(msg, (this.client.Client.RemoteEndPoint as IPEndPoint).Address));
             }
 
-            this.OnRemoteDisconnected(new RemoteDisconnectedEventArgs((this.client.Client.RemoteEndPoint as IPEndPoint).Address));
+            this.OnDisconnected(new DisconnectedEventArgs((this.client.Client.RemoteEndPoint as IPEndPoint).Address));
         }
 
         private int ReadPayloadSize()

@@ -39,7 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\RemoteDisconnectedEventArgs.cs" />
+    <Compile Include="Events\DisconnectedEventArgs.cs" />
     <Compile Include="Events\MessageReceivedEventArgs.cs" />
     <Compile Include="Tcp\Client.cs" />
     <Compile Include="Tcp\Server.cs" />
