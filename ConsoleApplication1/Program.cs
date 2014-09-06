@@ -1,9 +1,9 @@
-﻿using NetLib.Tcp.Client;
-using NetLib.Tcp.Server;
+﻿using NetLib.Tcp;
 using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace ConsoleApplication1
 {
@@ -23,6 +23,10 @@ namespace ConsoleApplication1
             // Client client = new Client("127.0.0.1", port);
 
             client.Send("Bonjour, wie gehts dir?");
+
+            Thread.Sleep(2000);
+
+            client.Disconnect();
         }
     }
 }

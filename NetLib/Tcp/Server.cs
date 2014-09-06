@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using NetLib.Events;
 
-namespace NetLib.Tcp.Server
+namespace NetLib.Tcp
 {
     /// <summary>
     /// Represents a TCP server.
@@ -20,7 +20,7 @@ namespace NetLib.Tcp.Server
 
         private Thread listenThread;
 
-        private List<Connection> connections;
+        private List<Client> connections;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Server" /> class.
@@ -37,7 +37,7 @@ namespace NetLib.Tcp.Server
                 this.port = port;
             }
 
-            this.connections = new List<Connection>();
+            this.connections = new List<Client>();
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace NetLib.Tcp.Server
             TcpClient client = (TcpClient)obj;
 
             // Create new connection
-            Connection connect = new Connection(client);
+            Client connect = new Client(client);
 
             // Subscribe to events
             connect.MessageReceived += this.MessageReceived;

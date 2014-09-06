@@ -10,7 +10,7 @@ namespace NetLib.Events
     /// <summary>
     /// Contains event arguments for when the remote becomes disconnected.
     /// </summary>
-    class RemoteDisconnectedEventArgs : EventArgs
+    public class RemoteDisconnectedEventArgs : EventArgs
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoteDisconnectedEventArgs" /> class.

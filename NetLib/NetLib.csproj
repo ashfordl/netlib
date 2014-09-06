@@ -40,14 +40,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\RemoteDisconnectedEventArgs.cs" />
-    <Compile Include="Tcp\Client\Client.cs" />
     <Compile Include="Events\MessageReceivedEventArgs.cs" />
-    <Compile Include="Tcp\Server\Connection.cs" />
-    <Compile Include="Tcp\Server\Server.cs" />
+    <Compile Include="Tcp\NetworkConnection.cs" />
+    <Compile Include="Tcp\Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
     </Compile>
-    <Compile Include="Tcp\StreamUtil.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
