@@ -91,6 +91,17 @@ namespace NetLib.Tcp
         public event EventHandler<DisconnectedEventArgs> Disconnected;
 
         /// <summary>
+        /// Gets the remote's IP address.
+        /// </summary>
+        public IPAddress IP
+        {
+            get
+            {
+                return (this.client.Client.RemoteEndPoint as IPEndPoint).Address;
+            }
+        }
+
+        /// <summary>
         /// Writes a message to the specified network stream.
         /// </summary>
         /// <param name="message"> The message to be sent. </param>
@@ -122,7 +133,7 @@ namespace NetLib.Tcp
         /// </summary>
         public void Disconnect()
         {
-            this.OnDisconnected(new DisconnectedEventArgs((this.client.Client.RemoteEndPoint as IPEndPoint).Address));
+            this.OnDisconnected(new DisconnectedEventArgs(this.IP));
 
             this.readThread.Abort();
             this.client.Close();
@@ -189,10 +200,10 @@ namespace NetLib.Tcp
                 // Message received
                 string msg = Encoding.ASCII.GetString(message, 0, message.Length);
 
-                this.OnMessageReceived(new MessageReceivedEventArgs(msg, (this.client.Client.RemoteEndPoint as IPEndPoint).Address));
+                this.OnMessageReceived(new MessageReceivedEventArgs(msg, this.IP));
             }
 
-            this.OnDisconnected(new DisconnectedEventArgs((this.client.Client.RemoteEndPoint as IPEndPoint).Address));
+            this.OnDisconnected(new DisconnectedEventArgs(this.IP));
         }
 
         private int ReadPayloadSize()
