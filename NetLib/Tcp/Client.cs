@@ -134,9 +134,6 @@ namespace NetLib.Tcp
         public void Disconnect()
         {
             this.OnDisconnected(new DisconnectedEventArgs(this.IP));
-
-            this.readThread.Abort();
-            this.client.Close();
         }
 
         /// <summary>
@@ -159,12 +156,17 @@ namespace NetLib.Tcp
         /// <param name="e"> The event arguments to fire with. </param>
         protected virtual void OnDisconnected(DisconnectedEventArgs e)
         {
+            // Fire event
             EventHandler<DisconnectedEventArgs> handler = this.Disconnected;
 
             if (handler != null)
             {
                 handler(this, e);
             }
+
+            // Disconnect
+            this.readThread.Abort();
+            this.client.Close();
         }
 
         /// <summary>
@@ -199,7 +201,7 @@ namespace NetLib.Tcp
 
                 // Message received
                 string msg = Encoding.ASCII.GetString(message, 0, message.Length);
-
+                
                 this.OnMessageReceived(new MessageReceivedEventArgs(msg, this.IP));
             }
 

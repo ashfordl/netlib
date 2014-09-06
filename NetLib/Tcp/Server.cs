@@ -41,6 +41,16 @@ namespace NetLib.Tcp
         }
 
         /// <summary>
+        /// Fires when the connection receives a message.
+        /// </summary>
+        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+
+        /// <summary>
+        /// Fires when the remote becomes disconnected.
+        /// </summary>
+        public event EventHandler<DisconnectedEventArgs> ClientDisconnected;
+
+        /// <summary>
         /// Gets the port number of the server.
         /// </summary>
         public int Port
@@ -62,6 +72,36 @@ namespace NetLib.Tcp
             this.listenThread.Start();
         }
 
+
+        /// <summary>
+        /// Manages and fires the <see cref="MessageReceived" /> event.
+        /// </summary>
+        /// <param name="e"> The event arguments to fire with. </param>
+        protected virtual void OnMessageReceived(object origin, MessageReceivedEventArgs e)
+        {
+            EventHandler<MessageReceivedEventArgs> handler = this.MessageReceived;
+
+            if (handler != null)
+            {
+                handler(origin, e);
+            }
+        }
+
+        /// <summary>
+        /// Manages and fires the <see cref="ClientDisconnected" /> event.
+        /// </summary>
+        /// <param name="e"> The event arguments to fire with. </param>
+        protected virtual void OnClientDisconnected(object origin, DisconnectedEventArgs e)
+        {
+            EventHandler<DisconnectedEventArgs> handler = this.ClientDisconnected;
+
+            if (handler != null)
+            {
+                handler(origin, e);
+            }
+        }
+
+
         /// <summary>
         /// Handles the connection of a new client.
         /// </summary>
@@ -74,8 +114,8 @@ namespace NetLib.Tcp
             Client connect = new Client(client);
 
             // Subscribe to events
-            connect.MessageReceived += this.MessageReceived;
-            connect.Disconnected += this.RemoteDisconnected;
+            connect.MessageReceived += this.Client_MessageReceived;
+            connect.Disconnected += this.Client_Disconnected;
             
             // Add the connection to the master list
             lock (this.connections)
@@ -85,18 +125,23 @@ namespace NetLib.Tcp
         }
 
         /// <summary>
-        /// 
+        /// Handles the MessageReceived event for each Client
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected virtual void MessageReceived(object sender, MessageReceivedEventArgs e)
+        /// <param name="sender"> The object that raised the event. </param>
+        /// <param name="e"> The event arguments. </param>
+        protected virtual void Client_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            Console.WriteLine("Server: Message received \"" + e.Message + "\"");
+            this.OnMessageReceived(sender, e);
         }
 
-        protected virtual void RemoteDisconnected(object sender, DisconnectedEventArgs e)
+        /// <summary>
+        /// Handles the Disconnected event for each Client
+        /// </summary>
+        /// <param name="sender"> The object that raised the event. </param>
+        /// <param name="e"> The event arguments. </param>
+        protected virtual void Client_Disconnected(object sender, DisconnectedEventArgs e)
         {
-            Console.WriteLine("Server: Client disconnected. IP = " + e.RemoteIP);
+            this.OnClientDisconnected(sender, e);
 
             lock (this.connections)
             {
