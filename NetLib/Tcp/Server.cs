@@ -121,10 +121,8 @@ namespace NetLib.Tcp
         /// Handles the connection of a new client.
         /// </summary>
         /// <param name="obj"> The client connection object. </param>
-        protected virtual void HandleClientConnected(object obj)
+        protected virtual void HandleClientConnected(TcpClient client)
         {
-            TcpClient client = (TcpClient)obj;
-
             // Create new connection
             Client connect = new Client(client);
 
@@ -174,8 +172,9 @@ namespace NetLib.Tcp
                 TcpClient client = this.listener.AcceptTcpClient();
 
                 // Create a new client thread
-                Thread clientThread = new Thread(new ParameterizedThreadStart(this.HandleClientConnected));
-                clientThread.Start(client);
+                Thread clientThread = new Thread(() => HandleClientConnected(client));
+                clientThread.IsBackground = true;
+                clientThread.Start();
             }
         }
     }
