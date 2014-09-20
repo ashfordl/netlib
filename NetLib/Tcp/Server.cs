@@ -118,26 +118,6 @@ namespace NetLib.Tcp
         }
 
         /// <summary>
-        /// Handles the connection of a new client.
-        /// </summary>
-        /// <param name="obj"> The client connection object. </param>
-        protected virtual void HandleClientConnected(TcpClient client)
-        {
-            // Create new connection
-            Client connect = new Client(client);
-
-            // Subscribe to events
-            connect.MessageReceived += this.Client_MessageReceived;
-            connect.Disconnected += this.Client_Disconnected;
-            
-            // Add the connection to the master list
-            lock (this.connections)
-            {
-                this.connections.Add(connect);
-            }
-        }
-
-        /// <summary>
         /// Handles the MessageReceived event for each Client
         /// </summary>
         /// <param name="sender"> The object that raised the event. </param>
@@ -162,6 +142,26 @@ namespace NetLib.Tcp
             }
         }
 
+        /// <summary>
+        /// Handles the connection of a new client.
+        /// </summary>
+        /// <param name="obj"> The client connection object. </param>
+        protected virtual void HandleClientConnected(TcpClient client)
+        {
+            // Create new connection
+            Client connect = new Client(client);
+
+            // Subscribe to events
+            connect.MessageReceived += this.Client_MessageReceived;
+            connect.Disconnected += this.Client_Disconnected;
+
+            // Add the connection to the master list
+            lock (this.connections)
+            {
+                this.connections.Add(connect);
+            }
+        }
+
         private void Listen()
         {
             this.listener.Start();
@@ -172,7 +172,7 @@ namespace NetLib.Tcp
                 TcpClient client = this.listener.AcceptTcpClient();
 
                 // Create a new client thread
-                Thread clientThread = new Thread(() => HandleClientConnected(client));
+                Thread clientThread = new Thread(() => this.HandleClientConnected(client));
                 clientThread.IsBackground = true;
                 clientThread.Start();
             }
