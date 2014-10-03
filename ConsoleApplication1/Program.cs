@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using NetLib;
 using NetLib.Events;
 using NetLib.Tcp;
 
@@ -15,35 +16,43 @@ namespace ConsoleApplication1
             int port = 6565;
 
             Server server = new Server(port);
-            server.MessageReceived += Program.Server_MessageReceived;
-            server.ClientDisconnected += Program.Server_ClientDisconnected;
+
+            server.MessageReceived += Program.server_MessageReceived;
+            server.ClientDisconnected += Program.server_ClientDisconnected;
+            server.ClientConnected += Program.server_ClientConnected;
+
             server.Serve();
 
             Client client = new Client(IPAddress.Parse("127.0.0.1"), port);
-            client.MessageReceived += Program.Client_MessageReceived;
+            client.MessageReceived += Program.client_MessageReceived;
 
-            client.Send("Bonjour, wie gehts dir?");
+            client.Send(new Message("Bonjour, wie gehts dir?"));
 
             Thread.Sleep(250);
 
-            server.MessageAllClients("Broadcast");
+            server.MessageAllClients(new Message("Broadcast"));
 
             Thread.Sleep(250);
 
             client.Disconnect();
         }
 
-        static void Server_MessageReceived(object sender, MessageReceivedEventArgs e)
+        private static void server_ClientConnected(object sender, ConnectedEventArgs e)
+        {
+            Console.WriteLine("Client connected from IP  " + e.RemoteIP);
+        }
+
+        static void server_MessageReceived(object sender, DataReceivedEventArgs e)
         {
             Console.WriteLine("Server received message: " + e.Message);
         }
 
-        static void Server_ClientDisconnected(object sender, DisconnectedEventArgs e)
+        static void server_ClientDisconnected(object sender, DisconnectedEventArgs e)
         {
-            Console.WriteLine("Client " + e.RemoteIP + " disconnected");
+            Console.WriteLine("Client disconnected from IP " + e.RemoteIP);
         }
 
-        static void Client_MessageReceived(object sender, MessageReceivedEventArgs e)
+        static void client_MessageReceived(object sender, DataReceivedEventArgs e)
         {
             Console.WriteLine("Client received message: " + e.Message);
         }

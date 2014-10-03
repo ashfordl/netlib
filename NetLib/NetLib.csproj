@@ -40,9 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\ConnectedEventArgs.cs" />
     <Compile Include="Events\DisconnectedEventArgs.cs" />
-    <Compile Include="Events\MessageReceivedEventArgs.cs" />
+    <Compile Include="Events\DataReceivedEventArgs.cs" />
     <Compile Include="Tcp\Client.cs" />
+    <Compile Include="Message.cs" />
     <Compile Include="Tcp\Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>

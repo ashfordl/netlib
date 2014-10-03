@@ -83,7 +83,7 @@ namespace NetLib.Tcp
         /// <summary>
         /// Fires when the connection receives a message.
         /// </summary>
-        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+        public event EventHandler<DataReceivedEventArgs> MessageReceived;
 
         /// <summary>
         /// Fires when the remote becomes disconnected.
@@ -105,20 +105,12 @@ namespace NetLib.Tcp
         /// Writes a message to the specified network stream.
         /// </summary>
         /// <param name="message"> The message to be sent. </param>
-        public void Send(string message)
+        public void Send(Message message)
         {
-            byte[] payload = Encoding.ASCII.GetBytes(message);
-
-            // Encode message in bytes
-            byte[] lenBuffer = BitConverter.GetBytes(payload.Length); // 4 bytes
-
-            // Concat two byte arrays
-            byte[] buffer = new byte[4 + payload.Length];
-            lenBuffer.CopyTo(buffer, 0);
-            payload.CopyTo(buffer, 4);
+            byte[] data = message.ToByteArray();
 
             // Send the data
-            this.stream.Write(buffer, 0, buffer.Length);
+            this.stream.Write(data, 0, data.Length);
         }
 
         /// <summary>
@@ -133,9 +125,9 @@ namespace NetLib.Tcp
         /// Manages and fires the <see cref="MessageReceived" /> event.
         /// </summary>
         /// <param name="e"> The event arguments to fire with. </param>
-        protected virtual void OnMessageReceived(MessageReceivedEventArgs e)
+        protected virtual void OnMessageReceived(DataReceivedEventArgs e)
         {
-            EventHandler<MessageReceivedEventArgs> handler = this.MessageReceived;
+            EventHandler<DataReceivedEventArgs> handler = this.MessageReceived;
 
             if (handler != null)
             {
@@ -172,12 +164,14 @@ namespace NetLib.Tcp
         {
             while (true)
             {
+                int code = 0;
                 byte[] message;
 
                 try
                 {
                     // Convert the size to an integer
                     int size = this.ReadPayloadSize();
+                    code = this.ReadCode();
 
                     message = this.ReadPayload(size);
                 }
@@ -192,10 +186,7 @@ namespace NetLib.Tcp
                     break;
                 }
 
-                // Message received
-                string msg = Encoding.ASCII.GetString(message, 0, message.Length);
-                
-                this.OnMessageReceived(new MessageReceivedEventArgs(msg, this.IP));
+                this.OnMessageReceived(new DataReceivedEventArgs(new Message(code, message), this.IP));
             }
 
             this.OnDisconnected(new DisconnectedEventArgs(this.IP));
@@ -220,6 +211,26 @@ namespace NetLib.Tcp
 
             // Convert the size to an integer
             return BitConverter.ToInt32(sizeBuffer, 0);
+        }
+
+        private int ReadCode()
+        {
+            // Assign the payload buffer array
+            byte[] message = new byte[4];
+
+            // Asign message framing variables
+            int totalRead = 0, currentRead = 0;
+
+            // Read the payload
+            do
+            {
+                currentRead = this.stream.Read(message, totalRead, message.Length - totalRead);
+
+                totalRead += currentRead;
+            }
+            while (totalRead < message.Length && currentRead > 0);
+
+            return BitConverter.ToInt32(message, 0);
         }
 
         private byte[] ReadPayload(int size)

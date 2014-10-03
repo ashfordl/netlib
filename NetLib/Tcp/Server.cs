@@ -43,12 +43,17 @@ namespace NetLib.Tcp
         /// <summary>
         /// Fires when the connection receives a message.
         /// </summary>
-        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
+        public event EventHandler<DataReceivedEventArgs> MessageReceived;
 
         /// <summary>
         /// Fires when the remote becomes disconnected.
         /// </summary>
         public event EventHandler<DisconnectedEventArgs> ClientDisconnected;
+
+        /// <summary>
+        /// Fires when a client connects.
+        /// </summary>
+        public event EventHandler<ConnectedEventArgs> ClientConnected;
 
         /// <summary>
         /// Gets the port number of the server.
@@ -76,7 +81,7 @@ namespace NetLib.Tcp
         /// Sends the passed message to every connected client.
         /// </summary>
         /// <param name="message"> The message to send. </param>
-        public void MessageAllClients(string message)
+        public void MessageAllClients(Message message)
         {
             lock (this.connections)
             {
@@ -92,9 +97,9 @@ namespace NetLib.Tcp
         /// </summary>
         /// <param name="origin"> The Client object that first fired the event. </param>
         /// <param name="e"> The event arguments to fire with. </param>
-        protected virtual void OnMessageReceived(object origin, MessageReceivedEventArgs e)
+        protected virtual void OnMessageReceived(object origin, DataReceivedEventArgs e)
         {
-            EventHandler<MessageReceivedEventArgs> handler = this.MessageReceived;
+            EventHandler<DataReceivedEventArgs> handler = this.MessageReceived;
 
             if (handler != null)
             {
@@ -118,11 +123,26 @@ namespace NetLib.Tcp
         }
 
         /// <summary>
+        /// Manages and fires the <see cref="ClientConnected" /> event.
+        /// </summary>
+        /// <param name="origin"> The Client object that first fired the event. </param>
+        /// <param name="e"> The event arguments to fire with. </param>
+        protected virtual void OnClientConnected(object origin, ConnectedEventArgs e)
+        {
+            EventHandler<ConnectedEventArgs> handler = this.ClientConnected;
+
+            if (handler != null)
+            {
+                handler(origin, e);
+            }
+        }
+
+        /// <summary>
         /// Handles the MessageReceived event for each Client
         /// </summary>
         /// <param name="sender"> The object that raised the event. </param>
         /// <param name="e"> The event arguments. </param>
-        protected virtual void Client_MessageReceived(object sender, MessageReceivedEventArgs e)
+        protected virtual void Client_MessageReceived(object sender, DataReceivedEventArgs e)
         {
             this.OnMessageReceived(sender, e);
         }
@@ -154,6 +174,8 @@ namespace NetLib.Tcp
             // Subscribe to events
             connect.MessageReceived += this.Client_MessageReceived;
             connect.Disconnected += this.Client_Disconnected;
+
+            OnClientConnected(this, new ConnectedEventArgs(connect.IP));
 
             // Add the connection to the master list
             lock (this.connections)
