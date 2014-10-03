@@ -24,7 +24,7 @@ namespace NetLib.Events
         }
 
         /// <summary>
-        /// Gets or sets the IP from which the message was received.
+        /// Gets or sets the remote IP.
         /// </summary>
         public IPAddress RemoteIP
         {

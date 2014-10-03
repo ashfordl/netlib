@@ -145,7 +145,7 @@ namespace NetLib.Tcp
         /// <summary>
         /// Handles the connection of a new client.
         /// </summary>
-        /// <param name="obj"> The client connection object. </param>
+        /// <param name="client"> The client connection object. </param>
         protected virtual void HandleClientConnected(TcpClient client)
         {
             // Create new connection
